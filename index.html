@@ -16,13 +16,13 @@
       <div class="brand-row">
         <div class="logo-mark">S</div>
         <div>
-          <p class="eyebrow">Private messenger</p>
+          <p class="eyebrow">Realtime private messenger</p>
           <h1>Shadow Chat</h1>
         </div>
       </div>
 
       <p class="login-text">
-        Закритий веб-месенджер з входом по логіну і паролю, приватними чатами, групами та адмін-панеллю.
+        Закритий веб-месенджер з реальним сервером, приватними чатами, групами, онлайн-статусом і адмін-панеллю.
       </p>
 
       <form id="loginForm" class="login-form">
@@ -74,7 +74,7 @@
         <span class="pulse"></span>
         <div>
           <strong id="onlineCount">0 онлайн</strong>
-          <p>Онлайн-статус оновлюється автоматично</p>
+          <p id="connectionStatus">Підключення до сервера...</p>
         </div>
       </div>
 
@@ -180,6 +180,7 @@
 
   <div id="toast" class="toast hidden"></div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
