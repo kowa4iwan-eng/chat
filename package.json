@@ -1,12 +1,13 @@
 {
   "name": "shadow-chat",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Realtime private messenger prototype with Node.js, Express and Socket.IO",
-  "main": "server.js",
+  "description": "Realtime private messenger with memory-only server",
+  "main": "server-memory.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server-memory.js",
+    "dev": "node server-memory.js",
+    "start:file-db": "node server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
