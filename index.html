@@ -2,40 +2,183 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Тестовий сайт</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#06121f" />
+  <title>Shadow Chat — секретний месенджер</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="page">
-    <section class="hero">
-      <div class="badge">GitHub + ChatGPT</div>
-      <h1>Тестовий сайт створено 🚀</h1>
-      <p>
-        Це простий сайт, який я додав напряму у твій репозиторій GitHub.
-        Його можна використати як стартову сторінку для нового проєкту.
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <section id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="logo-mark">S</div>
+        <div>
+          <p class="eyebrow">Private messenger</p>
+          <h1>Shadow Chat</h1>
+        </div>
+      </div>
+
+      <p class="login-text">
+        Закритий веб-месенджер з входом по логіну і паролю, приватними чатами, групами та адмін-панеллю.
       </p>
-      <div class="actions">
-        <a class="btn primary" href="https://github.com/kowa4iwan-eng/chat" target="_blank" rel="noopener">Відкрити репозиторій</a>
-        <button class="btn secondary" id="changeText">Натисни мене</button>
+
+      <form id="loginForm" class="login-form">
+        <label>
+          <span>Логін</span>
+          <input id="loginInput" type="text" autocomplete="username" placeholder="admin" required />
+        </label>
+        <label>
+          <span>Пароль</span>
+          <input id="passwordInput" type="password" autocomplete="current-password" placeholder="admin123" required />
+        </label>
+        <button class="primary-btn" type="submit">Увійти</button>
+      </form>
+
+      <div class="demo-access">
+        <strong>Тестовий вхід:</strong>
+        <span>admin / admin123</span>
+        <span>ivan / 1111</span>
+        <span>natasha / 2222</span>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <header class="sidebar-header">
+        <div class="profile-pill">
+          <div id="currentAvatar" class="avatar">A</div>
+          <div>
+            <strong id="currentName">Admin</strong>
+            <span id="currentRole">Адміністратор</span>
+          </div>
+        </div>
+        <button id="logoutBtn" class="icon-btn" title="Вийти">⏻</button>
+      </header>
+
+      <div class="search-box">
+        <span>⌕</span>
+        <input id="searchInput" type="search" placeholder="Пошук чатів..." />
+      </div>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="direct">Люди</button>
+        <button class="tab" data-tab="groups">Групи</button>
+        <button class="tab admin-only" data-tab="admin">Адмін</button>
+      </nav>
+
+      <div class="status-card">
+        <span class="pulse"></span>
+        <div>
+          <strong id="onlineCount">0 онлайн</strong>
+          <p>Онлайн-статус оновлюється автоматично</p>
+        </div>
+      </div>
+
+      <div id="conversationList" class="conversation-list"></div>
+    </aside>
+
+    <main class="chat-panel" id="chatPanel">
+      <header class="chat-header">
+        <button id="mobileMenuBtn" class="mobile-menu">☰</button>
+        <div class="chat-title-wrap">
+          <div id="chatAvatar" class="avatar chat-avatar">?</div>
+          <div>
+            <h2 id="chatTitle">Вибери чат</h2>
+            <p id="chatSubtitle">Приватні повідомлення і групи</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="adminShortcut" class="ghost-btn admin-only">Адмін-панель</button>
+        </div>
+      </header>
+
+      <section id="emptyState" class="empty-state">
+        <div class="empty-icon">🔐</div>
+        <h2>Секретний месенджер готовий</h2>
+        <p>Вибери користувача або групу зліва, щоб почати переписку.</p>
+      </section>
+
+      <section id="messagesArea" class="messages-area hidden"></section>
+
+      <footer id="composer" class="composer hidden">
+        <button id="emojiBtn" class="round-btn" type="button">😊</button>
+        <label class="round-btn attach-btn" title="Додати фото або відео">
+          📎
+          <input id="fileInput" type="file" accept="image/*,video/*" hidden />
+        </label>
+        <textarea id="messageInput" rows="1" placeholder="Напиши повідомлення..."></textarea>
+        <button id="sendBtn" class="send-btn" type="button">➤</button>
+        <div id="emojiPicker" class="emoji-picker hidden"></div>
+      </footer>
+    </main>
+
+    <section id="adminPanel" class="admin-panel hidden">
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Control center</p>
+          <h2>Адмін-панель</h2>
+        </div>
+        <button id="closeAdminBtn" class="icon-btn">×</button>
+      </header>
+
+      <div class="admin-grid">
+        <article class="metric-card">
+          <span>Користувачі</span>
+          <strong id="usersMetric">0</strong>
+        </article>
+        <article class="metric-card">
+          <span>Групи</span>
+          <strong id="groupsMetric">0</strong>
+        </article>
+        <article class="metric-card">
+          <span>Повідомлення</span>
+          <strong id="messagesMetric">0</strong>
+        </article>
+      </div>
+
+      <div class="admin-sections">
+        <form id="userForm" class="admin-card">
+          <h3>Додати користувача</h3>
+          <div class="form-grid">
+            <label><span>Ім’я</span><input id="newUserName" type="text" placeholder="Петро" required /></label>
+            <label><span>Логін</span><input id="newUserLogin" type="text" placeholder="petro" required /></label>
+            <label><span>Пароль</span><input id="newUserPassword" type="text" placeholder="1234" required /></label>
+            <label><span>Роль</span><input id="newUserRole" type="text" placeholder="Користувач" /></label>
+          </div>
+          <div class="rights-row">
+            <label><input id="rightDirect" type="checkbox" checked /> Приватні чати</label>
+            <label><input id="rightGroups" type="checkbox" checked /> Групи</label>
+            <label><input id="rightMedia" type="checkbox" checked /> Фото/відео</label>
+            <label><input id="rightAdmin" type="checkbox" /> Адмін</label>
+          </div>
+          <button class="primary-btn" type="submit">Створити користувача</button>
+        </form>
+
+        <form id="groupForm" class="admin-card">
+          <h3>Створити групу</h3>
+          <label><span>Назва групи</span><input id="newGroupName" type="text" placeholder="Охорона / Каса / Керівництво" required /></label>
+          <div id="groupMembers" class="member-picker"></div>
+          <button class="primary-btn" type="submit">Створити групу</button>
+        </form>
+
+        <div class="admin-card wide">
+          <h3>Користувачі та права</h3>
+          <div id="usersTable" class="users-table"></div>
+        </div>
+
+        <div class="admin-card wide">
+          <h3>Групи</h3>
+          <div id="groupsTable" class="groups-table"></div>
+        </div>
       </div>
     </section>
+  </div>
 
-    <section class="cards">
-      <article class="card">
-        <h2>HTML</h2>
-        <p>Структура сторінки готова.</p>
-      </article>
-      <article class="card">
-        <h2>CSS</h2>
-        <p>Доданий красивий адаптивний дизайн.</p>
-      </article>
-      <article class="card">
-        <h2>JavaScript</h2>
-        <p>Є маленька інтерактивна кнопка.</p>
-      </article>
-    </section>
-  </main>
+  <div id="toast" class="toast hidden"></div>
 
   <script src="script.js"></script>
 </body>
