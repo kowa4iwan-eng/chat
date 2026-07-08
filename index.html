@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#06121f" />
-  <title>Shadow Chat — секретний месенджер</title>
+  <title>Shadow Chat — приватний месенджер</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -16,7 +16,7 @@
       <div class="brand-row">
         <div class="logo-mark">S</div>
         <div>
-          <p class="eyebrow">Realtime private messenger</p>
+          <p class="eyebrow">Private messenger</p>
           <h1>Shadow Chat</h1>
         </div>
       </div>
@@ -28,21 +28,14 @@
       <form id="loginForm" class="login-form">
         <label>
           <span>Логін</span>
-          <input id="loginInput" type="text" autocomplete="username" placeholder="admin" required />
+          <input id="loginInput" type="text" autocomplete="username" placeholder="Введіть логін" required />
         </label>
         <label>
           <span>Пароль</span>
-          <input id="passwordInput" type="password" autocomplete="current-password" placeholder="admin123" required />
+          <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Введіть пароль" required />
         </label>
         <button class="primary-btn" type="submit">Увійти</button>
       </form>
-
-      <div class="demo-access">
-        <strong>Тестовий вхід:</strong>
-        <span>admin / admin123</span>
-        <span>ivan / 1111</span>
-        <span>natasha / 2222</span>
-      </div>
     </div>
   </section>
 
@@ -98,7 +91,7 @@
 
       <section id="emptyState" class="empty-state">
         <div class="empty-icon">🔐</div>
-        <h2>Секретний месенджер готовий</h2>
+        <h2>Месенджер готовий</h2>
         <p>Вибери користувача або групу зліва, щоб почати переписку.</p>
       </section>
 
@@ -146,13 +139,15 @@
           <div class="form-grid">
             <label><span>Ім’я</span><input id="newUserName" type="text" placeholder="Петро" required /></label>
             <label><span>Логін</span><input id="newUserLogin" type="text" placeholder="petro" required /></label>
-            <label><span>Пароль</span><input id="newUserPassword" type="text" placeholder="1234" required /></label>
+            <label><span>Пароль</span><input id="newUserPassword" type="text" placeholder="Новий пароль" required /></label>
             <label><span>Роль</span><input id="newUserRole" type="text" placeholder="Користувач" /></label>
+            <label class="wide-field"><span>Аватарка</span><input id="newUserAvatar" type="file" accept="image/*" /></label>
           </div>
           <div class="rights-row">
             <label><input id="rightDirect" type="checkbox" checked /> Приватні чати</label>
             <label><input id="rightGroups" type="checkbox" checked /> Групи</label>
             <label><input id="rightMedia" type="checkbox" checked /> Фото/відео</label>
+            <label><input id="rightSeeOnline" type="checkbox" checked /> Бачити онлайн</label>
             <label><input id="rightAdmin" type="checkbox" /> Адмін</label>
           </div>
           <button class="primary-btn" type="submit">Створити користувача</button>
