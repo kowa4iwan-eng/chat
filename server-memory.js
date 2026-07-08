@@ -26,11 +26,13 @@ const byId = (id) => users.find((u) => u.id === id);
 const bySession = (sid) => byId(sessions.get(sid));
 
 function addStarterUsers() {
-  const admin = { id: 'u-admin', name: 'Адміністратор', login: process.env.ADMIN_LOGIN || 'admin', password: process.env.ADMIN_PASSWORD || 'admin123', role: 'Головний адмін', avatar: null, active: true, rights: { admin: true, direct: true, groups: true, media: true, seeOnline: true }, lastSeen: 0 };
-  const user = { id: 'u-user', name: 'Користувач', login: 'user', password: '1111', role: 'Користувач', avatar: null, active: true, rights: { admin: false, direct: true, groups: true, media: true, seeOnline: true }, lastSeen: 0 };
-  users = [admin, user];
-  groups = [{ id: 'g-main', name: 'Загальна група', members: [admin.id, user.id], createdAt: now() }];
+  const adminLogin = process.env.ADMIN_LOGIN || 'admin';
+  const adminPassword = process.env.ADMIN_PASSWORD || `admin-${Math.random().toString(36).slice(2, 8)}`;
+  const admin = { id: 'u-admin', name: 'Адміністратор', login: adminLogin, password: adminPassword, role: 'Головний адмін', avatar: null, active: true, rights: { admin: true, direct: true, groups: true, media: true, seeOnline: true }, lastSeen: 0 };
+  users = [admin];
+  groups = [{ id: 'g-main', name: 'Загальна група', members: [admin.id], createdAt: now() }];
   messages = [{ id: uid('m'), conversationId: roomGroup('g-main'), type: 'group', targetId: 'g-main', senderId: admin.id, text: 'Сервер працює без файлової бази.', media: null, createdAt: now() }];
+  if (!process.env.ADMIN_PASSWORD) console.log(`Temporary admin login: ${adminLogin} / ${adminPassword}`);
 }
 addStarterUsers();
 
@@ -47,7 +49,7 @@ app.get('/api/bootstrap', auth, (req, res) => { req.user.lastSeen = Date.now(); 
 app.post('/api/logout', auth, (req, res) => { sessions.delete(req.headers['x-session-id']); res.json({ ok: true }); });
 app.post('/api/users', auth, admin, (req, res) => { const b = req.body; const login = String(b.login || '').trim().toLowerCase(); if (!b.name || !login || !b.password) return res.status(400).json({ error: 'EMPTY_FIELDS' }); if (users.some((u) => u.login === login)) return res.status(409).json({ error: 'LOGIN_EXISTS' }); const u = { id: uid('u'), name: String(b.name), login, password: String(b.password), role: String(b.role || 'Користувач'), avatar: b.avatar || null, active: true, rights: b.rights || {}, lastSeen: 0 }; users.push(u); io.emit('admin:update'); res.status(201).json({ user: pub(u) }); });
 app.patch('/api/users/:id', auth, admin, (req, res) => { const u = byId(req.params.id); if (!u) return res.status(404).json({ error: 'NOT_FOUND' }); const b = req.body; if (b.name) u.name = String(b.name); if (b.login) u.login = String(b.login).trim().toLowerCase(); if (b.password) u.password = String(b.password); if (b.role) u.role = String(b.role); if ('avatar' in b) u.avatar = b.avatar || null; if (typeof b.active === 'boolean') u.active = b.active; if (b.rights) u.rights = { ...u.rights, ...b.rights }; presence(); io.emit('admin:update'); res.json({ user: pub(u) }); });
-app.post('/api/groups', auth, admin, (req, res) => { const name = String(req.body.name || '').trim(); const members = [...new Set([...(req.body.members || []), req.user.id])].filter(byId); if (!name || members.length < 2) return res.status(400).json({ error: 'BAD_GROUP' }); const g = { id: uid('g'), name, members, createdAt: now() }; groups.push(g); io.emit('admin:update'); res.status(201).json({ group: g }); });
+app.post('/api/groups', auth, admin, (req, res) => { const name = String(req.body.name || '').trim(); const members = [...new Set([...(req.body.members || []), req.user.id])].filter(byId); if (!name) return res.status(400).json({ error: 'BAD_GROUP' }); const g = { id: uid('g'), name, members, createdAt: now() }; groups.push(g); io.emit('admin:update'); res.status(201).json({ group: g }); });
 
 io.use((socket, next) => { const u = bySession(socket.handshake.auth?.sessionId); if (!u || !u.active) return next(new Error('NO_SESSION')); socket.userId = u.id; next(); });
 io.on('connection', (socket) => { let u = byId(socket.userId); u.lastSeen = Date.now(); socket.join(u.id); groupsFor(u).forEach((g) => socket.join(roomGroup(g.id))); presence(); socket.emit('bootstrap', boot(u)); socket.on('message:send', (p, cb = () => {}) => { try { u = byId(socket.userId); const text = String(p.text || '').trim(); const media = p.media || null; if (!text && !media) throw new Error('EMPTY'); let conversationId = ''; let recipients = []; if (p.type === 'direct') { const t = byId(p.targetId); conversationId = roomDirect(u.id, t.id); recipients = [u.id, t.id]; } else { const g = groups.find((x) => x.id === p.targetId); conversationId = roomGroup(g.id); recipients = g.members; } const m = { id: uid('m'), conversationId, type: p.type, targetId: p.targetId, senderId: u.id, text, media, createdAt: now() }; messages.push(m); recipients.forEach((r) => io.to(r).emit('message:new', m)); cb({ ok: true, message: m }); } catch (e) { cb({ ok: false, error: e.message }); } }); });
